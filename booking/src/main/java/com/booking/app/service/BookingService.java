@@ -1,6 +1,5 @@
 package com.booking.app.service;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -43,26 +42,8 @@ public class BookingService {
 	@Autowired
 	TrainClient trainClient;
 	
-	public List<User> getUsersService() {
-		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-		return circuitBreaker.run(() -> userClient.getUser(), throwable -> getDefaultInfoUsers());
-	}
 	
-	public List<User> getDefaultInfoUsers() {
-		logger.warn("User service is down");
-		return Collections.emptyList();
-	}
-	
-	public List<Train> getTrainsService() {
-		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-		return circuitBreaker.run(() -> trainClient.getTrains(), throwable -> getDefaultInfoTrains());
-	}
-	
-	public List<Train> getDefaultInfoTrains() {
-		logger.warn("Train service is down");
-		return Collections.emptyList();
-	}
-	
+	//Booking service
 	public List<Booking> getBookings(){
 		return bookingRepo.findAll();
 	}
@@ -96,10 +77,8 @@ public class BookingService {
 		return bookingRepo.save(booking);
 	}
 	
-	public List<User> getUsers(){
-		return userClient.getUser();
-	}
-	
+		
+	//User service
 	public Optional<User> getUser(Integer userId) {
 		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
 		return circuitBreaker.run(() -> userClient.getUserByUserId(userId), throwable -> getDefaultInfoUser());
@@ -110,18 +89,18 @@ public class BookingService {
 		return Optional.empty();
 	}
 	
-	public Optional<User> getUserByUserId(Integer userId){
-		return userClient.getUserByUserId(userId);
+	public List<User> getUsersService() {
+		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+		return circuitBreaker.run(() -> userClient.getUser(), throwable -> getDefaultInfoUsers());
 	}
 	
-	public List<Train> getTrains(){
-		return trainClient.getTrains();
+	public List<User> getDefaultInfoUsers() {
+		logger.warn("User service is down");
+		return Collections.emptyList();
 	}
 	
-	public List<Train> getTrainsPerParams(String source, String destination, LocalDate date) {
-		return trainClient.getTrainsPerParams(source, destination, date);
-	}
 	
+	//Train service
 	public Optional<Train> getTrain(Integer trainId) {
 		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
 		return circuitBreaker.run(() -> trainClient.getTrainByTrainId(trainId), throwable -> getDefaultInfoTrain());
@@ -132,7 +111,14 @@ public class BookingService {
 		return Optional.empty();
 	}
 	
-	public Optional<Train> getTrainByTrainId(Integer trainId){
-		return trainClient.getTrainByTrainId(trainId);
+	public List<Train> getTrainsService() {
+		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+		return circuitBreaker.run(() -> trainClient.getTrains(), throwable -> getDefaultInfoTrains());
+	}
+	
+	public List<Train> getDefaultInfoTrains() {
+		logger.warn("Train service is down");
+		return Collections.emptyList();
 	}
 }
+
